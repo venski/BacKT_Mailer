@@ -1,0 +1,35 @@
+group "azadev.backt"
+version "0.7"
+
+buildscript {
+	// http://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-gradle-plugin
+	// https://plugins.jetbrains.com/plugin/6954-kotlin
+	ext.has("kotlin_version") || (ext.kotlin_version = "1.1.2-5")
+
+	// https://github.com/Anizoptera/Kotlin-Logging-Facade
+	ext.has("kotlog_version") || (ext.kotlog_version = "0.8")
+
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+	}
+}
+
+apply plugin: "kotlin"
+
+repositories {
+	mavenLocal()
+	jcenter()
+	maven { url "http://dl.bintray.com/azadev/maven" }
+}
+
+dependencies {
+	compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+	compile "azadev.logging:kotlog:$kotlog_version"
+
+	// http://mvnrepository.com/artifact/com.sun.mail/javax.mail
+	compile "com.sun.mail:javax.mail:1.5.6"
+}
