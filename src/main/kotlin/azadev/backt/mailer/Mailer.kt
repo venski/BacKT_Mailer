@@ -39,10 +39,10 @@ object Mailer
 	}
 
 	fun receive(
-			user: String,
-			pass: String,
 			host: String,
 			port: Int,
+			user: String,
+			pass: String,
 			folderName: String = "INBOX",
 			limit: Int = Int.MAX_VALUE
 	): Array<out Message> {
