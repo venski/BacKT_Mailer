@@ -1,9 +1,10 @@
+@file:Suppress("unused")
+
 package azadev.backt.mailer
 
 import java.util.*
 import javax.mail.*
-import javax.mail.internet.InternetAddress
-import javax.mail.internet.MimeMessage
+import javax.mail.internet.*
 
 
 object Mailer
@@ -18,9 +19,8 @@ object Mailer
 			pass: String,
 			to: String,
 			subject: String,
-			body_text: String
-			/*body_html: String
-			bodyParts: List*/
+			body_text: String? = null,
+			body_html: String? = null
 	) {
 		val session = getSession(user, pass)
 
@@ -30,7 +30,16 @@ object Mailer
 		msg.subject = subject
 		msg.sentDate = Date()
 
-		msg.setText(body_text, Charsets.UTF_8.toString())
+		when {
+			body_text != null && body_html != null -> {
+				val multipart = MimeMultipart("alternative")
+				multipart.addBodyPart(MimeBodyPart().apply { setContent(body_text, "text/plain; charset=utf-8") })
+				multipart.addBodyPart(MimeBodyPart().apply { setContent(body_html, "text/html; charset=utf-8") })
+				msg.setContent(multipart)
+			}
+			body_text != null -> msg.setContent(body_text, "text/plain; charset=utf-8")
+			body_html != null -> msg.setContent(body_html, "text/html; charset=utf-8")
+		}
 
 		val transport = session.getTransport("smtps")
 		transport.connect(host, port, user, pass)
