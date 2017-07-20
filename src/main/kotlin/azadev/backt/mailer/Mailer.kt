@@ -11,6 +11,9 @@ object Mailer
 {
 	var debug = true
 
+	var connectionTimeout = 1000*60
+	var ioTimeout = 1000*60*10
+
 
 	fun send(
 			host: String,
@@ -22,7 +25,7 @@ object Mailer
 			body_text: String? = null,
 			body_html: String? = null
 	) {
-		val session = getSession(user, pass)
+		val session = getSession(user, pass, "smtps")
 
 		val msg = MimeMessage(session)
 		msg.setFrom(InternetAddress(user))
@@ -55,7 +58,7 @@ object Mailer
 			folderName: String = "INBOX",
 			limit: Int = Int.MAX_VALUE
 	): Array<out Message> {
-		val session = getSession(user, pass)
+		val session = getSession(user, pass, "imaps")
 
 		val store = session.getStore("imaps")
 		store.connect(host, port, user, pass)
@@ -78,7 +81,7 @@ object Mailer
 			createIfNotExists: Boolean = false,
 			createWithType: Int = Folder.HOLDS_FOLDERS
 	) {
-		val session = getSession(user, pass)
+		val session = getSession(user, pass, "imaps")
 
 		val store = session.getStore("imaps")
 		store.connect(host, port, user, pass)
@@ -94,11 +97,14 @@ object Mailer
 	}
 
 
-	private fun getSession(user: String, pass: String): Session {
+	private fun getSession(user: String, pass: String, protocol: String): Session {
 		val props = Properties()
 
 		if (debug)
 			props.put("mail.debug", debug)
+
+		props.put("mail.$protocol.connectiontimeout", connectionTimeout)
+		props.put("mail.$protocol.timeout", ioTimeout)
 
 		return Session.getInstance(props, object : Authenticator() {
 			override fun getPasswordAuthentication() = PasswordAuthentication(user, pass)
