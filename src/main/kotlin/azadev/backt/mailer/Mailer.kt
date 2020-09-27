@@ -1,10 +1,12 @@
-@file:Suppress("unused")
+//@file:Suppress("unused")
 
 package azadev.backt.mailer
 
 import java.util.*
 import javax.mail.*
 import javax.mail.internet.*
+import javax.mail.Authenticator
+import javax.mail.PasswordAuthentication
 
 
 object Mailer
